@@ -1,8 +1,8 @@
 name: Generate Streak SVG
 on:
   schedule:
-    - cron: "0 * * * *" # Runs every hour
-  workflow_dispatch: # Allows manual triggering
+    - cron: "0 * * * *"  # Runs every hour
+  workflow_dispatch:     # Allows manual triggering
 
 jobs:
   update-svg:
@@ -17,10 +17,10 @@ jobs:
           node-version: '18'
 
       - name: Install Dependencies
-        run: npm install
+        run: npm install axios
 
       - name: Run SVG Generator
-        run: node generate-svg.js
+        run: node githubstreak-svg.js
 
       - name: Commit and Push Changes
         run: |
