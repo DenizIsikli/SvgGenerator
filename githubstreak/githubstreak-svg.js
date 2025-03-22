@@ -27,7 +27,7 @@ async function generateSVG() {
       </text>
     </svg>`;
 
-    fs.writeFileSync("streak.svg", svgContent);
+    fs.writeFileSync("githubstreak/streak.svg", svgContent);
     console.log("SVG generated successfully!");
 }
 
