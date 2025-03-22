@@ -1,31 +1,15 @@
 const fs = require("fs");
 const axios = require("axios");
 
-const username = "DenizIsikli"; // Change this to your username
+const username = "DenizIsikli";
 
 async function fetchContributions() {
-    const url = `https://api.github.com/users/${username}/events/public`;
+    const url = `https://api.rigle.co/github-streak/stats/${username}`;
     try {
-        const response = await axios.get(url, {
-            headers: { "User-Agent": "Mozilla/5.0" },
-        });
-
-        const events = response.data;
-        let streak = 0;
-        let lastDate = null;
-
-        events.forEach(event => {
-            // Only count contributions (commits, PRs, issues)
-            if (["PushEvent", "PullRequestEvent", "IssuesEvent"].includes(event.type)) {
-                const eventDate = new Date(event.created_at).toDateString();
-                if (eventDate !== lastDate) {
-                    streak++;
-                    lastDate = eventDate;
-                }
-            }
-        });
-
-        return streak;
+        const response = await axios.get(url);
+        const { currentStreak } = response.data;
+        
+        return currentStreak.days || 0;
     } catch (error) {
         console.error("Error fetching contributions:", error);
         return 0;
@@ -36,10 +20,10 @@ async function generateSVG() {
     const streak = await fetchContributions();
 
     const svgContent = `
-    <svg width="400" height="100" xmlns="http://www.w3.org/2000/svg">
-      <rect width="100%" height="100%" fill="black"/>
-      <text x="50%" y="50%" font-size="24" fill="white" text-anchor="middle" alignment-baseline="middle">
-        🔥 Current Streak: ${streak} days 🔥
+    <svg width="400" height="120" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100%" height="100%" fill="#282828" rx="15" ry="15"/>
+      <text x="50%" y="50%" font-size="24" fill="#ebdbb2" text-anchor="middle" alignment-baseline="middle" font-family="Arial, sans-serif">
+        🔥 Current Streak: <tspan fill="#fe8019">${streak}</tspan> days 🔥
       </text>
     </svg>`;
 
