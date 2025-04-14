@@ -14,13 +14,16 @@ jobs:
       - name: Set Up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
 
       - name: Install Dependencies
+        run: npm install --save-dev @types/node
         run: npm install axios
+        run: npm install node-fetch
 
       - name: Run SVG Generator
-        run: node githubStreak.js
+        run: node githubStreak.ts
+        run: node leetcodeStats.ts
 
       - name: Commit and Push Changes
         run: |
