@@ -38,7 +38,7 @@ function generateSVG() {
         //   </text>
         // </svg>`;
         //
-        // fs.writeFileSync("githubstreak/streak.svg", svgContent);
+        // fs.writeFileSync("src/svg/githubStreak.svg", svgContent);
         // console.log("SVG generated successfully!");
     });
 }

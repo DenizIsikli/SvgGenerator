@@ -102,7 +102,7 @@ function generateSVG(user) {
             🔥 Current Streak: <tspan fill="#fe8019">${stats.totalSolved}</tspan> days 🔥
         </text>
     </svg>`;
-        fs.writeFileSync("../../svg/leetcodeStats.svg", svgContent);
+        fs.writeFileSync("src/svg/leetcodeStats.svg", svgContent);
         console.log("SVG generated successfully!");
     });
 }
