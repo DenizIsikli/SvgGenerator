@@ -1,6 +1,6 @@
 import fs from 'fs';
 import axios from "axios";
-import { Contribution } from "./interfaces.ts";
+import { Contribution } from "./interfaces";
 
 const username = "DenizIsikli"
 

@@ -1,7 +1,6 @@
-import fs from 'fs';
-import fetch from 'node-fetch';
-import userProfileQuery from './graphQuery.ts';
-import { GraphQLResponse } from './interfaces.ts';
+import * as fs from 'fs';
+import userProfileQuery from './graphQuery';
+import { GraphQLResponse } from './interfaces';
 
 const formatData = (data: GraphQLResponse['data']) => {
     return {
