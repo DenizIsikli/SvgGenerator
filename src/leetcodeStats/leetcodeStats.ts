@@ -61,7 +61,7 @@ async function generateSVG(user: string) {
         </text>
     </svg>`;
 
-    fs.writeFileSync("leetcodeStats/stats.svg", svgContent);
+    fs.writeFileSync("../svg/leetcodeStats.svg", svgContent);
     console.log("SVG generated successfully!");
 }
 
