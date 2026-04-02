@@ -2,11 +2,11 @@
 
 This repository contains multiple SVG generators for different purposes, allowing users to display live-updating visuals in their GitHub profiles or other platforms.
 
-## 🚀 How to Use
+## How to Use
 
 Follow these steps to set up and use any SVG generator in this repository.
 
-### 1️⃣ Fork & Clone the Repository
+### Fork & Clone the Repository
 
 ```sh
 # Clone the repository
@@ -14,7 +14,7 @@ git clone https://github.com/your-username/repo-name.git
 cd repo-name
 ```
 
-### 2️⃣ Set Up GitHub Actions Workflow
+### Set Up GitHub Actions Workflow
 
 To automate SVG generation, create a workflow file inside `.github/workflows/`.
 
@@ -57,26 +57,26 @@ jobs:
           GH_PAT: ${{ secrets.GH_PAT }}
 ```
 
-### 3️⃣ Set Up GitHub Secrets
+### Set Up GitHub Secrets
 
 Go to **GitHub Repository → Settings → Secrets and variables → Actions**, then:
 
 - **Add a new secret** named `GH_PAT` with a **Personal Access Token (PAT)**.
 - The token should have these permissions:
-  - ✅ `repo → Contents (Read & Write)`
-  - ✅ `workflow (Read & Write)`
+  - `repo → Contents (Read & Write)`
+  - `workflow (Read & Write)`
 
-### 4️⃣ Run the Workflow
+### Run the Workflow
 
 - **Manually trigger the workflow** via GitHub Actions (or wait for the scheduled run).
 - The SVGs will be generated and updated in their respective folders.
 
-## 📌 Available SVG Generators
+## Available SVG Generators
 
 - **GitHub Streak** → `githubstreak/streak.svg`
 - *(Add more SVG generators here as needed)*
 
-## 💡 Usage
+## Usage
 
 To use an SVG in your `README.md`, embed it like this:
 
