@@ -36,6 +36,10 @@ jobs:
         if: always()
         run: npm run generate:leetcode
 
+      - name: Generate Codeforce SVG
+        if: always()
+        run: npm run generate:codeforce
+
       - name: Commit changed SVGs
         if: always()
         run: |

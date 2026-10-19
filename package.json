@@ -2,7 +2,7 @@
   "name": "svg-generator",
   "version": "1.0.0",
   "private": true,
-  "description": "Self-hosted SVG cards for a GitHub profile: GitHub contribution streak and LeetCode stats.",
+  "description": "Self-hosted SVG cards for a GitHub profile: GitHub streak, LeetCode and Codeforces stats.",
   "license": "MIT",
   "engines": {
     "node": ">=20"
@@ -11,7 +11,8 @@
     "build": "tsc",
     "generate:streak": "node dist/githubStreak/githubStreak.js",
     "generate:leetcode": "node dist/leetcodeStats/leetcodeStats.js",
-    "generate": "npm run build && npm run generate:streak && npm run generate:leetcode"
+    "generate:codeforce": "node dist/codeforceStats/codeforceStats.js",
+    "generate": "npm run build && npm run generate:streak && npm run generate:leetcode && npm run generate:codeforce"
   },
   "devDependencies": {
     "@types/node": "^20.14.0",
