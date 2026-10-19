@@ -51,7 +51,7 @@ function renderSVG({ solved, total, ranking }: LeetCodeStats): string {
         .join("\n    ");
 
     return `<svg width="400" height="140" viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif">
-<rect x="0.5" y="0.5" width="399" height="139" rx="15" ry="15" fill="#282828" stroke="#282828"/>
+    <rect x="0.5" y="0.5" width="399" height="139" rx="15" ry="15" fill="#282828" stroke="#282828"/>
     <text x="24" y="38" font-size="22" fill="#ebdbb2">LeetCode Solved: <tspan fill="#fe8019">${solved.All}</tspan></text>
     <text x="376" y="38" font-size="12" fill="#a89984" text-anchor="end">Rank ${ranking.toLocaleString("en-US")}</text>
     ${rowSvg}

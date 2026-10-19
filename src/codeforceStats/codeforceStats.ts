@@ -33,10 +33,10 @@ async function fetchCodeforceStats(username: string): Promise<CodeforcesStats> {
 }
 
 function renderSVG({ handle, solved }: CodeforcesStats): string {
-    return `<svg width="400" height="80" viewBox="0 0 400 80" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif">
-    <rect x="0.5" y="0.5" width="399" height="79" rx="15" ry="15" fill="#282828" stroke="#282828"/>
-    <text x="24" y="38" font-size="22" fill="#ebdbb2">Codeforces Solved: <tspan fill="#fe8019">${solved}</tspan></text>
-    <text x="24" y="60" font-size="12" fill="#a89984">${handle}</text>
+    return `<svg width="400" height="140" viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif">
+    <rect x="0.5" y="0.5" width="399" height="139" rx="15" ry="15" fill="#282828" stroke="#282828"/>
+    <text x="24" y="66" font-size="22" fill="#ebdbb2">Codeforces Solved: <tspan fill="#fe8019">${solved}</tspan></text>
+    <text x="24" y="90" font-size="12" fill="#a89984">${handle}</text>
     </svg>`;
 }
 
