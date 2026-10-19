@@ -1,69 +1,73 @@
-import * as fs from 'fs';
-import userProfileQuery from './graphQuery';
-import { GraphQLResponse } from './interfaces';
+import fs from "fs";
+import path from "path";
+import userProfileQuery from "./graphQuery";
+import { DifficultyCount, GraphQLResponse, LeetCodeStats } from "./interfaces";
 
-const formatData = (data: GraphQLResponse['data']) => {
+const USERNAME = "DenizIsikli";
+const OUTPUT = path.join("src", "svg", "leetcodeStats.svg");
+
+// Turns [{ difficulty: "Easy", count: 5 }, ...] into { Easy: 5, ... }, independent of array order.
+function byDifficulty(list: DifficultyCount[]): LeetCodeStats["solved"] {
+    const result = { All: 0, Easy: 0, Medium: 0, Hard: 0 };
+    for (const { difficulty, count } of list) result[difficulty] = count;
+    return result;
+}
+
+async function fetchLeetCodeStats(username: string): Promise<LeetCodeStats> {
+    const res = await fetch("https://leetcode.com/graphql", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Referer: "https://leetcode.com",
+            "User-Agent": "svg-generator",
+        },
+        body: JSON.stringify({ query: userProfileQuery, variables: { username } }),
+    });
+    if (!res.ok) throw new Error(`LeetCode responded ${res.status}`);
+
+    const { data, errors } = (await res.json()) as GraphQLResponse;
+    if (errors?.length) throw new Error(`LeetCode GraphQL error: ${errors[0].message}`);
+    if (!data.matchedUser) throw new Error(`LeetCode user "${username}" not found`);
+
     return {
-        totalSolved: data.matchedUser.submitStats.acSubmissionNum[0].count,
-        totalSubmissions: data.matchedUser.submitStats.totalSubmissionNum,
-        totalQuestions: data.allQuestionsCount[0].count,
-        easySolved: data.matchedUser.submitStats.acSubmissionNum[1].count,
-        totalEasy: data.allQuestionsCount[1].count,
-        mediumSolved: data.matchedUser.submitStats.acSubmissionNum[2].count,
-        totalMedium: data.allQuestionsCount[2].count,
-        hardSolved: data.matchedUser.submitStats.acSubmissionNum[3].count,
-        totalHard: data.allQuestionsCount[3].count,
+        solved: byDifficulty(data.matchedUser.submitStats.acSubmissionNum),
+        total: byDifficulty(data.allQuestionsCount),
         ranking: data.matchedUser.profile.ranking,
-        contributionPoint: data.matchedUser.contributions.points,
-        reputation: data.matchedUser.profile.reputation,
-        submissionCalendar: JSON.parse(data.matchedUser.submissionCalendar),
-        recentSubmissions: data.recentSubmissionList,
-        matchedUserStats: data.matchedUser.submitStats
     };
 }
 
-async function fetchLeetCodeData(user: string): Promise<any> {
-    try {
-        const response = await fetch('https://leetcode.com/graphql', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Referer': 'https://leetcode.com'
-            },
-            body: JSON.stringify({ query: userProfileQuery, variables: { username: user } }),
-        });
-        
-        const result = await response.json();
+function renderSVG({ solved, total, ranking }: LeetCodeStats): string {
+    const rows = [
+        { label: "Easy", color: "#b8bb26", y: 70 },
+        { label: "Medium", color: "#fabd2f", y: 92 },
+        { label: "Hard", color: "#fb4934", y: 114 },
+    ] as const;
 
-        const typedResult = result as GraphQLResponse;
+    const rowSvg = rows
+        .map(
+            ({ label, color, y }) =>
+                `<text x="24" y="${y}" font-size="14" fill="${color}">${label}</text>
+    <text x="376" y="${y}" font-size="14" fill="#ebdbb2" text-anchor="end">${solved[label]} / ${total[label]}</text>`,
+        )
+        .join("\n    ");
 
-        if (typedResult.errors) {
-            throw new Error(`Error fetching data: ${typedResult.errors[0].message}`);
-        } else {
-            return formatData(typedResult.data);
-        }
-    }
-    catch (error) {
-        console.error('Error fetching data:', error);
-        throw error;
-    }
+    return `<svg width="400" height="140" viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif">
+    <rect width="100%" height="100%" fill="#282828" rx="15" ry="15"/>
+    <text x="24" y="38" font-size="22" fill="#ebdbb2">LeetCode Solved: <tspan fill="#fe8019">${solved.All}</tspan></text>
+    <text x="376" y="38" font-size="12" fill="#a89984" text-anchor="end">Rank ${ranking.toLocaleString("en-US")}</text>
+    ${rowSvg}
+</svg>
+`;
 }
 
-
-async function generateSVG(user: string) {
-    const stats = await fetchLeetCodeData(user);
-
-    const svgContent = `
-    <svg width="400" height="120" xmlns="http://www.w3.org/2000/svg">
-        <rect width="100%" height="100%" fill="#282828" rx="15" ry="15"/>
-        <text x="50%" y="50%" font-size="24" fill="#ebdbb2" text-anchor="middle" alignment-baseline="middle" font-family="Arial, sans-serif">
-            🔥 Current Streak: <tspan fill="#fe8019">${stats.totalSolved}</tspan> days 🔥
-        </text>
-    </svg>`;
-
-    fs.writeFileSync("src/svg/leetcodeStats.svg", svgContent);    
-    console.log("SVG generated successfully!");
+async function main() {
+    const stats = await fetchLeetCodeStats(USERNAME);
+    fs.mkdirSync(path.dirname(OUTPUT), { recursive: true });
+    fs.writeFileSync(OUTPUT, renderSVG(stats));
+    console.log(`LeetCode solved: ${stats.solved.All}, written to ${OUTPUT}`);
 }
 
-generateSVG("DenizIsikli");
-
+main().catch((error) => {
+    console.error("Failed to generate LeetCode SVG:", error);
+    process.exit(1);
+});

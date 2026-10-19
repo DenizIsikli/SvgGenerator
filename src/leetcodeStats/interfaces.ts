@@ -1,38 +1,27 @@
+export interface DifficultyCount {
+    difficulty: "All" | "Easy" | "Medium" | "Hard";
+    count: number;
+}
+
 export interface MatchedUser {
-  submitStats: {
-    acSubmissionNum: Array<{ count: number }>;
-    totalSubmissionNum: Array<{ count: number }>;
-  };
-  profile: {
-    ranking: number;
-    reputation: number;
-  };
-  contributions: {
-    points: number;
-  };
-  submissionCalendar: string;
-}
-
-export interface AllQuestionsCount {
-  difficulty: string;
-  count: number;
-}
-
-export interface RecentSubmission {
-  title: string;
-  titleSlug: string;
-  timestamp: string;
-  statusDisplay: string;
-  lang: string;
-  __typename: string;
+    profile: {
+        ranking: number;
+    };
+    submitStats: {
+        acSubmissionNum: DifficultyCount[];
+    };
 }
 
 export interface GraphQLResponse {
-  errors?: any;
-  data: {
-    allQuestionsCount: AllQuestionsCount[];
-    matchedUser: MatchedUser;
-    recentSubmissionList: RecentSubmission[];
-  };
+    errors?: { message: string }[];
+    data: {
+        allQuestionsCount: DifficultyCount[];
+        matchedUser: MatchedUser | null;
+    };
 }
 
+export interface LeetCodeStats {
+    solved: Record<DifficultyCount["difficulty"], number>;
+    total: Record<DifficultyCount["difficulty"], number>;
+    ranking: number;
+}
