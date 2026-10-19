@@ -1,6 +1,7 @@
-<svg width="400" height="140" viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg">
-    <rect x="0.5" y="0.5" width="399" height="139" rx="15" ry="15" fill="#282828" stroke="#282828"/>
-    <text x="50%" y="50%" font-size="24" fill="#ebdbb2" text-anchor="middle" dominant-baseline="middle" font-family="Arial, sans-serif">
-        Current Streak: <tspan fill="#fe8019">1258</tspan> days
-    </text>
-    </svg>
+<svg width="400" height="140" viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif">
+    <rect x="0.5" y="0.5" width="399" height="139" rx="15" ry="15" fill="#0a0a0a" stroke="#262626"/>
+    <text x="376" y="38" font-size="12" fill="#8a8a8a" text-anchor="end">Longest 1,258</text>
+    <text x="24" y="66"><tspan font-size="44" font-weight="bold" fill="#ffffff">1,258</tspan><tspan dx="10" font-size="16" fill="#8a8a8a">day streak</tspan></text>
+    <text x="24" y="96" font-size="14" fill="#f5f5f5">5,897 total contributions</text>
+    <text x="24" y="116" font-size="12" fill="#8a8a8a">since May 11, 2023</text>
+</svg>

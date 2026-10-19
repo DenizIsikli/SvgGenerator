@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { theme } from "../themes/themes";
 import userProfileQuery from "./graphQuery";
 import { DifficultyCount, GraphQLResponse, LeetCodeStats } from "./interfaces";
 
@@ -37,23 +38,23 @@ async function fetchLeetCodeStats(username: string): Promise<LeetCodeStats> {
 
 function renderSVG({ solved, total, ranking }: LeetCodeStats): string {
     const rows = [
-        { label: "Easy", color: "#b8bb26", y: 70 },
-        { label: "Medium", color: "#fabd2f", y: 92 },
-        { label: "Hard", color: "#fb4934", y: 114 },
+        { label: "Easy", color: theme.easy, y: 70 },
+        { label: "Medium", color: theme.medium, y: 92 },
+        { label: "Hard", color: theme.hard, y: 114 },
     ] as const;
 
     const rowSvg = rows
         .map(
             ({ label, color, y }) =>
                 `<text x="24" y="${y}" font-size="14" fill="${color}">${label}</text>
-    <text x="376" y="${y}" font-size="14" fill="#ebdbb2" text-anchor="end">${solved[label]} / ${total[label]}</text>`,
+    <text x="376" y="${y}" font-size="14" fill="${theme.text}" text-anchor="end">${solved[label]} / ${total[label]}</text>`,
         )
         .join("\n    ");
 
     return `<svg width="400" height="140" viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif">
-    <rect x="0.5" y="0.5" width="399" height="139" rx="15" ry="15" fill="#282828" stroke="#282828"/>
-    <text x="24" y="38" font-size="22" fill="#ebdbb2">LeetCode Solved: <tspan fill="#fe8019">${solved.All}</tspan></text>
-    <text x="376" y="38" font-size="12" fill="#a89984" text-anchor="end">Rank ${ranking.toLocaleString("en-US")}</text>
+    <rect x="0.5" y="0.5" width="399" height="139" rx="15" ry="15" fill="${theme.background}" stroke="${theme.border}"/>
+    <text x="24" y="38" font-size="22" fill="${theme.text}">LeetCode Solved: <tspan fill="${theme.accent}">${solved.All}</tspan></text>
+    <text x="376" y="38" font-size="12" fill="${theme.muted}" text-anchor="end">Rank ${ranking.toLocaleString("en-US")}</text>
     ${rowSvg}
     </svg>`;
 }
@@ -65,7 +66,9 @@ async function main() {
     console.log(`LeetCode solved: ${stats.solved.All}, written to ${OUTPUT}`);
 }
 
-main().catch((error) => {
-    console.error("Failed to generate LeetCode SVG:", error);
-    process.exit(1);
-});
+if (require.main === module) {
+    main().catch((error) => {
+        console.error("Failed to generate LeetCode SVG:", error);
+        process.exit(1);
+    });
+}
