@@ -4,6 +4,14 @@ on:
   schedule:
     - cron: "0 * * * *" # Every hour
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "src/**/*.ts"
+      - "package.json"
+      - "package-lock.json"
+      - "tsconfig.json"
+      - ".github/workflows/svgGenerator.yml"
 
 permissions:
   contents: write
