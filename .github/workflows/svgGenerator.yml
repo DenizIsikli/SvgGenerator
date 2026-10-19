@@ -1,34 +1,47 @@
 name: SVG Generator
+
 on:
   schedule:
-    - cron: "0 * * * *"  # Runs every hour
-  workflow_dispatch:     # Allows manual triggering
+    - cron: "0 * * * *" # Every hour
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: svg-generator
+  cancel-in-progress: false
 
 jobs:
   update-svg:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Set Up Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
+          cache: npm
 
-      - name: Install Dependencies
-        run: npm install --save-dev @types/node
-        run: npm install axios
-        run: npm install node-fetch
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Run SVG Generator
-        run: node githubStreak.ts
-        run: node leetcodeStats.ts
+      - name: Build
+        run: npm run build
 
-      - name: Commit and Push Changes
+      - name: Generate GitHub streak SVG
+        run: npm run generate:streak
+
+      - name: Generate LeetCode SVG
+        if: always()
+        run: npm run generate:leetcode
+
+      - name: Commit changed SVGs
+        if: always()
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git commit -m "Updated SVG's" || echo "No changes to commit"
-          git push https://x-access-token:${{ secrets.GH_PAT }}@github.com/DenizIsikli/SvgGenerator.git HEAD:main
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/svg
+          git diff --cached --quiet && echo "No changes" && exit 0
+          git commit -m "Update SVGs"
+          git push
