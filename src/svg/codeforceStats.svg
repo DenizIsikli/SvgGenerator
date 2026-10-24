@@ -1,9 +1,9 @@
 <svg width="400" height="140" viewBox="0 0 400 140" xmlns="http://www.w3.org/2000/svg" font-family="Arial, sans-serif">
     <rect x="0.5" y="0.5" width="399" height="139" rx="15" ry="15" fill="#0a0a0a" stroke="#262626"/>
-    <text x="24" y="38" font-size="22" fill="#f5f5f5">Codeforces Solved: <tspan fill="#ffffff">855</tspan></text>
+    <text x="24" y="38" font-size="22" fill="#f5f5f5">Codeforces Solved: <tspan fill="#ffffff">856</tspan></text>
     <text x="376" y="38" font-size="12" fill="#8a8a8a" text-anchor="end">Berxwedan</text>
-    <rect x="29.3" y="60.0" width="24.6" height="50.0" rx="2" fill="#8a8a8a"><title>800: 337</title></rect><text x="41.6" y="126" font-size="9" fill="#8a8a8a" text-anchor="middle">800</text>
-    <rect x="64.5" y="84.0" width="24.6" height="26.0" rx="2" fill="#8a8a8a"><title>900: 175</title></rect>
+    <rect x="29.3" y="60.0" width="24.6" height="50.0" rx="2" fill="#8a8a8a"><title>800: 338</title></rect><text x="41.6" y="126" font-size="9" fill="#8a8a8a" text-anchor="middle">800</text>
+    <rect x="64.5" y="84.1" width="24.6" height="25.9" rx="2" fill="#8a8a8a"><title>900: 175</title></rect>
     <rect x="99.7" y="88.8" width="24.6" height="21.2" rx="2" fill="#8a8a8a"><title>1000: 143</title></rect>
     <rect x="134.9" y="97.1" width="24.6" height="12.9" rx="2" fill="#8a8a8a"><title>1100: 87</title></rect>
     <rect x="170.1" y="101.4" width="24.6" height="8.6" rx="2" fill="#8a8a8a"><title>1200: 58</title></rect><text x="182.4" y="126" font-size="9" fill="#8a8a8a" text-anchor="middle">1200</text>
