@@ -39,6 +39,8 @@ jobs:
 
       - name: Generate GitHub streak SVG
         run: npm run generate:streak
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Generate LeetCode SVG
         if: always()

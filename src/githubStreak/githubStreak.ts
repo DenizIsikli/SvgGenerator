@@ -1,6 +1,14 @@
 import fs from "fs";
 import path from "path";
-import { Contribution } from "./interfaces";
+import {
+    Contribution,
+    CONTRIBUTION_LEVELS,
+    CONTRIBUTIONS_QUERY,
+    ContributionsData,
+    CREATED_AT_QUERY,
+    CreatedAtData,
+    GraphQLResponse,
+} from "./interfaces";
 import { theme } from "../themes/themes";
 
 const USERNAME = "DenizIsikli";
@@ -24,43 +32,52 @@ function addDays(date: string, amount: number): string {
     return new Date(Date.parse(`${date}T00:00:00Z`) + amount * DAY_MS).toISOString().slice(0, 10);
 }
 
-// The year the account was created, so every year with possible contributions gets loaded.
+async function graphql<T>(query: string, variables: Record<string, unknown>): Promise<T> {
+    const token = process.env.GITHUB_TOKEN;
+    if (!token) throw new Error("GITHUB_TOKEN is not set");
+
+    const res = await fetch("https://api.github.com/graphql", {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            "User-Agent": "svg-generator",
+        },
+        body: JSON.stringify({ query, variables }),
+    });
+    if (!res.ok) throw new Error(`GitHub GraphQL responded ${res.status}`);
+
+    const json = (await res.json()) as GraphQLResponse<T>;
+    if (json.errors?.length) throw new Error(json.errors.map((e) => e.message).join("; "));
+    if (!json.data) throw new Error("GitHub GraphQL returned no data");
+    return json.data;
+}
+
 async function fetchFirstYear(): Promise<number> {
-    const headers: Record<string, string> = { "User-Agent": "svg-generator" };
-    if (process.env.GITHUB_TOKEN) headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
-
-    const res = await fetch(`https://api.github.com/users/${USERNAME}`, { headers });
-    if (!res.ok) throw new Error(`GitHub API responded ${res.status}`);
-
-    const { created_at } = (await res.json()) as { created_at: string };
-    return new Date(created_at).getUTCFullYear();
+    const { user } = await graphql<CreatedAtData>(CREATED_AT_QUERY, { login: USERNAME });
+    return new Date(user.createdAt).getUTCFullYear();
 }
 
 async function fetchYear(year: number): Promise<YearData> {
-    const url = `https://github.com/users/${USERNAME}/contributions?from=${year}-01-01&to=${year}-12-31`;
-    const res = await fetch(url, { headers: { "User-Agent": "svg-generator" } });
-    if (!res.ok) throw new Error(`GitHub responded ${res.status} for ${url}`);
+    const yearEnd = new Date(`${year}-12-31T23:59:59Z`);
+    const to = yearEnd.getTime() > Date.now() ? new Date() : yearEnd;
 
-    const html = await res.text();
-    return { days: parseContributions(html), total: parseTotal(html) };
-}
+    const { user } = await graphql<ContributionsData>(CONTRIBUTIONS_QUERY, {
+        login: USERNAME,
+        from: `${year}-01-01T00:00:00Z`,
+        to: to.toISOString(),
+    });
+    const calendar = user.contributionsCollection.contributionCalendar;
 
-export function parseContributions(html: string): Contribution[] {
-    const days: Contribution[] = [];
-
-    for (const [cell] of html.matchAll(/<td\b[^>]*\bdata-date="[^"]+"[^>]*>/g)) {
-        const date = cell.match(/\bdata-date="([^"]+)"/)?.[1];
-        const level = cell.match(/\bdata-level="(\d+)"/)?.[1];
-        if (date && level !== undefined) days.push({ date, level: Number(level) });
-    }
-
-    return days;
-}
-
-export function parseTotal(html: string): number {
-    const match = html.match(/([\d,]+)\s+contributions?\s+in\s+\d{4}/);
-    if (!match) throw new Error("Could not find the yearly contribution total");
-    return Number(match[1].replace(/,/g, ""));
+    return {
+        days: calendar.weeks.flatMap((week) =>
+            week.contributionDays.map((day) => ({
+                date: day.date,
+                level: CONTRIBUTION_LEVELS[day.contributionLevel],
+            })),
+        ),
+        total: calendar.totalContributions,
+    };
 }
 
 export function streakStats(days: Contribution[], today: string, totalContributions: number): StreakStats {
