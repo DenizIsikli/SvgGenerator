@@ -38,11 +38,27 @@ async function fetchFirstYear(): Promise<number> {
 
 async function fetchYear(year: number): Promise<YearData> {
     const url = `https://github.com/users/${USERNAME}/contributions?from=${year}-01-01&to=${year}-12-31`;
-    const res = await fetch(url, { headers: { "User-Agent": "svg-generator" } });
-    if (!res.ok) throw new Error(`GitHub responded ${res.status} for ${url}`);
+    const retryableStatuses = new Set([502, 503, 504, 429]);
 
-    const html = await res.text();
-    return { days: parseContributions(html), total: parseTotal(html) };
+    for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+            const res = await fetch(url, { headers: { "User-Agent": "svg-generator" } });
+            if (!res.ok) {
+                if (!retryableStatuses.has(res.status) || attempt === 2) {
+                    throw new Error(`GitHub responded ${res.status} for ${url}`);
+                }
+            } else {
+                const html = await res.text();
+                return { days: parseContributions(html), total: parseTotal(html) };
+            }
+        } catch (error) {
+            if (attempt === 2) throw error;
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 1000 * 2 ** attempt));
+    }
+
+    throw new Error(`GitHub responded unsuccessfully for ${url}`);
 }
 
 export function parseContributions(html: string): Contribution[] {
